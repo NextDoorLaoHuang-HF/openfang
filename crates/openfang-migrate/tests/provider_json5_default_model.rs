@@ -1,7 +1,11 @@
 use openfang_migrate::{openclaw, MigrateOptions, MigrateSource};
 use tempfile::TempDir;
 
-fn assert_default_model_mapping(model_ref: &str, expected_provider: &str, expected_api_key_env: &str) {
+fn assert_default_model_mapping(
+    model_ref: &str,
+    expected_provider: &str,
+    expected_api_key_env: &str,
+) {
     let source = TempDir::new().unwrap();
     let target = TempDir::new().unwrap();
 
@@ -33,9 +37,7 @@ fn assert_default_model_mapping(model_ref: &str, expected_provider: &str, expect
         .expect("config.toml should contain [default_model]");
 
     assert_eq!(
-        default_model
-            .get("provider")
-            .and_then(toml::Value::as_str),
+        default_model.get("provider").and_then(toml::Value::as_str),
         Some(expected_provider)
     );
     assert_eq!(
