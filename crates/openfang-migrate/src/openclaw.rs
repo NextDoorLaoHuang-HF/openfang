@@ -695,9 +695,11 @@ fn default_api_key_env(provider: &str) -> String {
         "huggingface" => "HF_API_KEY".to_string(),
         "replicate" => "REPLICATE_API_TOKEN".to_string(),
         "github-copilot" => "GITHUB_TOKEN".to_string(),
-        "ollama" => String::new(),   // Ollama doesn't need an API key
-        "vllm" => String::new(),     // vLLM is typically local
-        "lmstudio" => String::new(), // LM Studio is typically local
+        "ollama" => String::new(), // Ollama doesn't need an API key
+        // Keep explicit env names for local OpenAI-compatible providers to avoid
+        // falling back to default_model.api_key_env in kernel driver resolution.
+        "vllm" => "VLLM_API_KEY".to_string(),
+        "lmstudio" => "LMSTUDIO_API_KEY".to_string(),
         _ => format!("{}_API_KEY", provider.to_uppercase()),
     }
 }
@@ -3981,8 +3983,8 @@ mod tests {
         assert_eq!(default_api_key_env("replicate"), "REPLICATE_API_TOKEN");
         assert_eq!(default_api_key_env("github-copilot"), "GITHUB_TOKEN");
         assert!(default_api_key_env("ollama").is_empty());
-        assert!(default_api_key_env("vllm").is_empty());
-        assert!(default_api_key_env("lmstudio").is_empty());
+        assert_eq!(default_api_key_env("vllm"), "VLLM_API_KEY");
+        assert_eq!(default_api_key_env("lmstudio"), "LMSTUDIO_API_KEY");
     }
 
     #[test]
